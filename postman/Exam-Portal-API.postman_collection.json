@@ -1,0 +1,730 @@
+{
+  "info": {
+    "name": "Exam Portal API",
+    "description": "Complete API collection for the Exam Portal backend. Import this file into Postman.\n\nSetup:\n1. Copy `.env.example` to `.env` and start MongoDB\n2. Run `npm start` (server on http://localhost:5000)\n3. Run Admin Register/Login first, then Student Register/Login\n4. Tokens are auto-saved to collection variables after login",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000"
+    },
+    {
+      "key": "adminToken",
+      "value": ""
+    },
+    {
+      "key": "studentToken",
+      "value": ""
+    },
+    {
+      "key": "examId",
+      "value": ""
+    },
+    {
+      "key": "questionId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Root - Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "Auth",
+          "item": [
+            {
+              "name": "Register Admin",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"admin123\"\n}"
+                },
+                "url": "{{baseUrl}}/api/admin/register"
+              }
+            },
+            {
+              "name": "Login Admin",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 200) {",
+                      "  const json = pm.response.json();",
+                      "  if (json.token) {",
+                      "    pm.collectionVariables.set('adminToken', json.token);",
+                      "  }",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"admin123\"\n}"
+                },
+                "url": "{{baseUrl}}/api/admin/login"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Profile",
+          "item": [
+            {
+              "name": "Get Admin Profile",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": "{{baseUrl}}/api/admin/profile"
+              }
+            },
+            {
+              "name": "Change Password",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"oldPassword\": \"admin123\",\n  \"newPassword\": \"newpassword123\"\n}"
+                },
+                "url": "{{baseUrl}}/api/admin/change-password"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Exams",
+          "item": [
+            {
+              "name": "Create Exam",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 201) {",
+                      "  const json = pm.response.json();",
+                      "  if (json.data && json.data._id) {",
+                      "    pm.collectionVariables.set('examId', json.data._id);",
+                      "  }",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"JavaScript Assessment\",\n  \"description\": \"Basic JavaScript test\",\n  \"company\": \"507f1f77bcf86cd799439011\",\n  \"job\": \"507f1f77bcf86cd799439012\",\n  \"duration\": 30,\n  \"totalMarks\": 100,\n  \"passingMarks\": 40\n}"
+                },
+                "url": "{{baseUrl}}/api/admin/exam"
+              }
+            },
+            {
+              "name": "Get All Exams",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": "{{baseUrl}}/api/admin/exam"
+              }
+            },
+            {
+              "name": "Get Exam By ID",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": "{{baseUrl}}/api/admin/exam/{{examId}}"
+              }
+            },
+            {
+              "name": "Update Exam",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Updated JavaScript Assessment\",\n  \"duration\": 45\n}"
+                },
+                "url": "{{baseUrl}}/api/admin/exam/{{examId}}"
+              }
+            },
+            {
+              "name": "Delete Exam",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "url": "{{baseUrl}}/api/admin/exam/{{examId}}"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Questions",
+          "item": [
+            {
+              "name": "Add Question",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 201) {",
+                      "  const json = pm.response.json();",
+                      "  if (json.data && json.data._id) {",
+                      "    pm.collectionVariables.set('questionId', json.data._id);",
+                      "  }",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"examId\": \"{{examId}}\",\n  \"question\": \"What is 2 + 2?\",\n  \"questionType\": \"MCQ\",\n  \"options\": [\"2\", \"3\", \"4\", \"5\"],\n  \"correctAnswer\": \"4\",\n  \"marks\": 10,\n  \"difficulty\": \"Easy\",\n  \"isActive\": true\n}"
+                },
+                "url": "{{baseUrl}}/api/admin/question"
+              }
+            },
+            {
+              "name": "Get All Questions",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": "{{baseUrl}}/api/admin/question"
+              }
+            },
+            {
+              "name": "Get Question By ID",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": "{{baseUrl}}/api/admin/question/{{questionId}}"
+              }
+            },
+            {
+              "name": "Update Question",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"question\": \"What is 3 + 3?\",\n  \"correctAnswer\": \"6\",\n  \"marks\": 15\n}"
+                },
+                "url": "{{baseUrl}}/api/admin/question/{{questionId}}"
+              }
+            },
+            {
+              "name": "Delete Question",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "url": "{{baseUrl}}/api/admin/question/{{questionId}}"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Answers",
+          "item": [
+            {
+              "name": "Submit Answer (Admin)",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"studentId\": \"STUDENT_OBJECT_ID\",\n  \"examId\": \"{{examId}}\",\n  \"questionId\": \"{{questionId}}\",\n  \"selectedAnswer\": \"4\",\n  \"isCorrect\": true,\n  \"marksAwarded\": 10\n}"
+                },
+                "url": "{{baseUrl}}/api/admin/answer"
+              }
+            },
+            {
+              "name": "Get All Answers",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": "{{baseUrl}}/api/admin/answer"
+              }
+            },
+            {
+              "name": "Get Answer By ID",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": "{{baseUrl}}/api/admin/answer/:answerId"
+              }
+            },
+            {
+              "name": "Delete Answer",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "url": "{{baseUrl}}/api/admin/answer/:answerId"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Student",
+      "item": [
+        {
+          "name": "Auth",
+          "item": [
+            {
+              "name": "Register Student",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"student@example.com\",\n  \"password\": \"student123\"\n}"
+                },
+                "url": "{{baseUrl}}/api/user/register"
+              }
+            },
+            {
+              "name": "Login Student",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 200) {",
+                      "  const json = pm.response.json();",
+                      "  if (json.token) {",
+                      "    pm.collectionVariables.set('studentToken', json.token);",
+                      "  }",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"student@example.com\",\n  \"password\": \"student123\"\n}"
+                },
+                "url": "{{baseUrl}}/api/user/login"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Profile",
+          "item": [
+            {
+              "name": "Get Student Profile",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{studentToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": "{{baseUrl}}/api/user/profile"
+              }
+            },
+            {
+              "name": "Update Profile",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{studentToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"fullName\": \"John Doe\",\n  \"phone\": \"9876543210\",\n  \"skills\": [\"JavaScript\", \"Node.js\"],\n  \"education\": {\n    \"degree\": \"B.Tech\",\n    \"institution\": \"ABC University\",\n    \"marks\": 85\n  }\n}"
+                },
+                "url": "{{baseUrl}}/api/user/profile"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Assessment",
+          "item": [
+            {
+              "name": "Get Assessment",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{studentToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": "{{baseUrl}}/api/user/assessment"
+              }
+            },
+            {
+              "name": "Start Assessment",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{studentToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}"
+                },
+                "url": "{{baseUrl}}/api/user/assessment/start"
+              }
+            },
+            {
+              "name": "Log Activity",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{studentToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"eventType\": \"WINDOW_SWITCH\",\n  \"description\": \"User switched tab\",\n  \"metadata\": {\n    \"tabName\": \"Google\"\n  }\n}"
+                },
+                "url": "{{baseUrl}}/api/user/activity"
+              }
+            },
+            {
+              "name": "Submit Assessment",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{studentToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"answers\": [\n    {\n      \"questionId\": \"{{questionId}}\",\n      \"selectedAnswer\": \"4\"\n    }\n  ]\n}"
+                },
+                "url": "{{baseUrl}}/api/user/assessment/submit"
+              }
+            },
+            {
+              "name": "Get Result",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{studentToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": "{{baseUrl}}/api/user/assessment/result"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
