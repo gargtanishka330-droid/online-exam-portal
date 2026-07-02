@@ -6,7 +6,7 @@ const {
   loginAdmin,
   getProfile,
   changePassword,
-} = require("../controllers/adminController");
+} = require("../controllers/admincontroller");
 
 const {
   createExam,
