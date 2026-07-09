@@ -10,7 +10,6 @@ const adminRoutes = require("./routes/adminroutes");
 const userRoutes = require("./routes/userroutes");
 const analyticsRoutes = require("./routes/analyticsroutes");
 const app = express();
-console.log("MONGO_URI =", process.env.MONGO_URI);
 connectDB();
 
 app.use(cors());

@@ -39,10 +39,7 @@ exports.createExam = async (req, res) => {
 // Get All Exams
 exports.getAllExams = async (req, res) => {
   try {
-    const exams = await Exam.find()
-      .populate("company")
-      .populate("job")
-      .populate("questions");
+    const exams = await Exam.find().populate("questions");
 
     res.status(200).json({
       success: true,
@@ -60,11 +57,7 @@ exports.getAllExams = async (req, res) => {
 // Get Single Exam
 exports.getExamById = async (req, res) => {
   try {
-    const exam = await Exam.  
-    findById(req.params.id)
-      .populate("company")
-      .populate("job")
-      .populate("questions");
+    const exam = await Exam.findById(req.params.id).populate("questions");
 
     if (!exam) {
       return res.status(404).json({

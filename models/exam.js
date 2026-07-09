@@ -13,16 +13,13 @@ const examSchema = new mongoose.Schema(
       trim: true,
     },
 
+    // Company/Job belong to an external system — no local models, so plain ids
     company: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Company",
-      required: true,
     },
 
     job: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Job",
-      required: true,
     },
 
     duration: {
@@ -43,17 +40,9 @@ const examSchema = new mongoose.Schema(
     questions: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Question",
+        ref: "QuestionBank",
       },
     ],
-    createdAt: {
-        type: Date,
-        default:1,
-  },
-  updatedAt: {
-    type: Date,
-    default:1,
-  },
   },
   {
     timestamps: true,

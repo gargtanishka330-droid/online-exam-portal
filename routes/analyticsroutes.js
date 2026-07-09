@@ -10,6 +10,8 @@ const {
   deleteEvent,
 } = require("../controllers/analyticscontroller");
 
+const { verifyAdmin } = require("../middleware/auth");
+
 /**
  * @swagger
  * tags:
@@ -55,7 +57,7 @@ router.post("/event", createEvent);
  *       200:
  *         description: List of all analytics events
  */
-router.get("/", getAllEvents);
+router.get("/", verifyAdmin, getAllEvents);
 
 /**
  * @swagger
@@ -67,7 +69,7 @@ router.get("/", getAllEvents);
  *       200:
  *         description: List of impression events
  */
-router.get("/impressions", getImpressions);
+router.get("/impressions", verifyAdmin, getImpressions);
 
 /**
  * @swagger
@@ -79,7 +81,7 @@ router.get("/impressions", getImpressions);
  *       200:
  *         description: List of action events
  */
-router.get("/actions", getActions);
+router.get("/actions", verifyAdmin, getActions);
 
 /**
  * @swagger
@@ -91,7 +93,7 @@ router.get("/actions", getActions);
  *       200:
  *         description: Dashboard statistics
  */
-router.get("/dashboard", getDashboard);
+router.get("/dashboard", verifyAdmin, getDashboard);
 
 /**
  * @swagger
@@ -111,6 +113,6 @@ router.get("/dashboard", getDashboard);
  *       404:
  *         description: Event not found
  */
-router.delete("/:id", deleteEvent);
+router.delete("/:id", verifyAdmin, deleteEvent);
 
 module.exports = router;

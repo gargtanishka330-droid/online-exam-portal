@@ -22,7 +22,7 @@ const {
   getQuestionById,
   updateQuestion,
   deleteQuestion,
-} = require("../controllers/questionBankcontroller");
+} = require("../controllers/questionbankcontroller");
 
 const {
   submitAnswer,

@@ -2,10 +2,23 @@ const Admin = require("../models/admin");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-// Register Admin
+// Register Admin — first admin registers freely, after that an admin token is required
 exports.registerAdmin = async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    if ((await Admin.countDocuments()) > 0) {
+      const token = req.headers.authorization?.split(" ")[1];
+      try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        if (decoded.role !== "admin") throw new Error();
+      } catch {
+        return res.status(403).json({
+          success: false,
+          message: "Admin token required to register new admins.",
+        });
+      }
+    }
 
     const existingAdmin = await Admin.findOne({ email });
 
