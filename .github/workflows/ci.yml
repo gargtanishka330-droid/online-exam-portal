@@ -1,0 +1,20 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - run: npm ci
+      - name: Syntax-check all source files
+        run: |
+          for f in index.js server.js swagger.js config/*.js controllers/*.js middleware/*.js models/*.js routes/*.js; do
+            node --check "$f"
+          done
+      - name: Verify all modules resolve (catches case-sensitivity bugs)
+        run: node -e "require('./routes/adminroutes'); require('./routes/userroutes'); require('./routes/analyticsroutes'); console.log('all modules load')"
