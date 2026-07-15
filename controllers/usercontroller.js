@@ -479,6 +479,14 @@ exports.submitAssessment = async (req, res) => {
       });
     }
 
+    // Reject late submissions (60s grace for network delay)
+    if (attempt.expiresAt && Date.now() > attempt.expiresAt.getTime() + 60 * 1000) {
+      return res.status(400).json({
+        success: false,
+        message: "Assessment time has expired",
+      });
+    }
+
     const exam = await Exam.findById(student.assignedExamId);
     const questionIds = answers.map((a) => a.questionId);
     const questions = await QuestionBank.find({ _id: { $in: questionIds } });
