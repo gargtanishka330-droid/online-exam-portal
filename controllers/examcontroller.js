@@ -60,8 +60,7 @@ exports.getAllExams = async (req, res) => {
 // Get Single Exam
 exports.getExamById = async (req, res) => {
   try {
-    const exam = await Exam.  
-    findById(req.params.id)
+    const exam = await Exam.findById(req.params.id)
       .populate("company")
       .populate("job")
       .populate("questions");

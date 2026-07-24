@@ -26,6 +26,7 @@ const { verifyStudent } = require("../middleware/auth");
  *     summary: Register Student
  *     tags:
  *       - Student
+ *     security: []
  *     requestBody:
  *       required: true
  *       content:
@@ -57,6 +58,7 @@ router.post("/register", registerStudent);
  *     summary: Student Login
  *     tags:
  *       - Student
+ *     security: []
  *     requestBody:
  *       required: true
  *       content:
@@ -129,6 +131,12 @@ router.put("/profile", verifyStudent, updateProfile);
  * /api/user/assessment:
  *   get:
  *     summary: Get Assessment
+ *     description: |
+ *       Returns the assigned exam with questions (correct answers are hidden).
+ *       **Prerequisites:**
+ *       1. Login as student and authorize with the JWT token
+ *       2. Complete profile via PUT /api/user/profile (fullName, skills, education.degree, education.marks)
+ *       3. Admin must have created at least one exam with questions
  *     tags:
  *       - Assessment
  *     security:
@@ -136,6 +144,12 @@ router.put("/profile", verifyStudent, updateProfile);
  *     responses:
  *       200:
  *         description: Assessment fetched successfully
+ *       401:
+ *         description: Missing or invalid token — login first and click Authorize in Swagger
+ *       403:
+ *         description: Profile not complete — update profile before accessing assessment
+ *       404:
+ *         description: No exam assigned — admin needs to create an exam first
  */
 router.get("/assessment", verifyStudent, getAssessment);
 

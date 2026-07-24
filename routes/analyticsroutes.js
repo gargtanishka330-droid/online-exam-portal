@@ -23,25 +23,46 @@ const {
  *   post:
  *     summary: Create a new analytics event
  *     tags: [Analytics]
+ *     security: []
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - eventName
+ *               - eventType
+ *               - userId
  *             properties:
+ *               eventName:
+ *                 type: string
+ *                 example: Home Screen Opened
  *               eventType:
  *                 type: string
+ *                 enum:
+ *                   - impression
+ *                   - action
  *                 example: impression
- *               screen:
- *                 type: string
- *                 example: Home
  *               userId:
  *                 type: string
  *                 example: user123
+ *               screen:
+ *                 type: string
+ *                 example: Home
+ *               fileType:
+ *                 type: string
+ *                 example: pdf
+ *               metadata:
+ *                 type: object
+ *                 example:
+ *                   browser: Chrome
+ *                   os: Windows
  *     responses:
  *       201:
  *         description: Event created successfully
+ *       500:
+ *         description: Internal Server Error
  */
 router.post("/event", createEvent);
 
@@ -51,6 +72,7 @@ router.post("/event", createEvent);
  *   get:
  *     summary: Get all analytics events
  *     tags: [Analytics]
+ *     security: []
  *     responses:
  *       200:
  *         description: List of all analytics events
@@ -63,6 +85,7 @@ router.get("/", getAllEvents);
  *   get:
  *     summary: Get all impression events
  *     tags: [Analytics]
+ *     security: []
  *     responses:
  *       200:
  *         description: List of impression events
@@ -75,6 +98,7 @@ router.get("/impressions", getImpressions);
  *   get:
  *     summary: Get all action events
  *     tags: [Analytics]
+ *     security: []
  *     responses:
  *       200:
  *         description: List of action events
@@ -87,6 +111,7 @@ router.get("/actions", getActions);
  *   get:
  *     summary: Get analytics dashboard
  *     tags: [Analytics]
+ *     security: []
  *     responses:
  *       200:
  *         description: Dashboard statistics
@@ -99,6 +124,7 @@ router.get("/dashboard", getDashboard);
  *   delete:
  *     summary: Delete an analytics event
  *     tags: [Analytics]
+ *     security: []
  *     parameters:
  *       - in: path
  *         name: id

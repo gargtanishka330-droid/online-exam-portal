@@ -2,19 +2,19 @@ const mongoose = require("mongoose");
 
 const analyticsSchema = new mongoose.Schema(
   {
-    event_name: {
+    eventName: {
       type: String,
       required: true,
       trim: true,
     },
 
-    event_type: {
+    eventType: {
       type: String,
       enum: ["impression", "action"],
       required: true,
     },
 
-    user_id: {
+    userId: {
       type: String,
       required: true,
     },
@@ -24,7 +24,7 @@ const analyticsSchema = new mongoose.Schema(
       default: "",
     },
 
-    file_type: {
+    fileType: {
       type: String,
       default: "",
     },
