@@ -16,6 +16,7 @@ connectDB();
 app.use(cors());
 app.use(express.json());
 
+
 app.get("/", (req, res) => {
   res.json({ message: "Exam Portal API V1 " });
 });
