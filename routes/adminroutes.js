@@ -41,6 +41,14 @@ const {
   getAllJobs,
 } = require("../controllers/jobcontroller");
 
+const {
+  submitResult,
+  getAllResults,
+  getResultById,
+  getStudentResults,
+  deleteResult,
+} = require("../controllers/resultController");
+
 const { verifyAdmin } = require("../middleware/auth");
 
 // =========================
@@ -333,5 +341,21 @@ router.post("/answer", verifyAdmin, submitAnswer);
 router.get("/answer", verifyAdmin, getAllAnswers);
 router.get("/answer/:id", verifyAdmin, getAnswerById);
 router.delete("/answer/:id", verifyAdmin, deleteAnswer);
+// =========================
+// Result Routes
+// =========================
 
+router.post("/result/submit", verifyAdmin, submitResult);
+
+router.get("/result", verifyAdmin, getAllResults);
+
+router.get("/result/:id", verifyAdmin, getResultById);
+
+router.get(
+  "/result/student/:studentId",
+  verifyAdmin,
+  getStudentResults
+);
+
+router.delete("/result/:id", verifyAdmin, deleteResult);
 module.exports = router;
