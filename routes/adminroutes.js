@@ -47,7 +47,7 @@ const {
   getResultById,
   getStudentResults,
   deleteResult,
-} = require("../controllers/resultController");
+} = require("../controllers/resultcontroller");
 
 const { verifyAdmin } = require("../middleware/auth");
 
