@@ -14,7 +14,7 @@ const options = {
     servers: [
       {
      
-      url:"http://localhost:5000",
+      url:"https://job-portal-api.onrender.com",
         description: "Local Server",
       },
     ],
