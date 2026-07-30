@@ -43,7 +43,7 @@ const examSchema = new mongoose.Schema(
     questions: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "QuestionBank",
+        ref: "questionbank",
       },
     ],
     createdAt: {
