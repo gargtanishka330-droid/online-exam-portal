@@ -53,4 +53,4 @@ const questionBankSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("QuestionBank", questionBankSchema);
+module.exports = mongoose.model("questionbank", questionBankSchema);
