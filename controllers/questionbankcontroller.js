@@ -1,8 +1,8 @@
-const QuestionBank = require("../models/questionbank");
+const questionbank = require("../models/questionbank");
 
 exports.addQuestion = async (req, res) => {
   try {
-    const question = await QuestionBank.create(req.body);
+    const question = await questionbanknBank.create(req.body);
     res.status(201).json({ success: true, data: question });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -11,7 +11,7 @@ exports.addQuestion = async (req, res) => {
 
 exports.getAllQuestions = async (req, res) => {
   try {
-    const questions = await QuestionBank.find();
+    const questions = await questionbank.find();
     res.status(200).json({ success: true, count: questions.length, data: questions });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -20,7 +20,7 @@ exports.getAllQuestions = async (req, res) => {
 
 exports.getQuestionById = async (req, res) => {
   try {
-    const question = await QuestionBank.findById(req.params.id);
+    const question = await questionbank.findById(req.params.id);
     if (!question) {
       return res.status(404).json({ success: false, message: "Question not found" });
     }
@@ -32,7 +32,7 @@ exports.getQuestionById = async (req, res) => {
 
 exports.updateQuestion = async (req, res) => {
   try {
-    const question = await QuestionBank.findByIdAndUpdate(req.params.id, req.body, {
+    const question = await questionbank.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
     });
