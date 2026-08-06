@@ -5,7 +5,7 @@ const ExamAttempt = require("../models/examattempt");
 const Answer = require("../models/answer");
 const ActivityLog = require("../models/activitylog");
 const jwt = require("jsonwebtoken");
-
+const sendEmail = require("../utils/sendEmail");
 const isProfileComplete = (student) => {
   return (
     student.fullName &&
@@ -71,7 +71,23 @@ exports.registerStudent = async (req, res) => {
     }
 
     const student = await Student.create({ email, password });
-
+    await sendEmail(
+      student.email,
+      "Welcome to Online Exam Portal",
+      `
+      <h2>Welcome to Online Exam Portal 🎉</h2>
+  
+      <p>Your account has been created successfully.</p>
+  
+      <p><b>Email:</b> ${student.email}</p>
+  
+      <p>Please login and complete your profile to start your assessment.</p>
+  
+      <hr>
+  
+      <p>Thank you.</p>
+      `
+  );
     res.status(201).json({
       success: true,
       message: "Student registered successfully",
