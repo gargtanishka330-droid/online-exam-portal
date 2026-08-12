@@ -78,23 +78,28 @@ exports.registerStudent = async (req, res) => {
     }
 
     const student = await Student.create({ email, password });
-    await sendEmail(
-      student.email,
-      "Welcome to Online Exam Portal",
-      `
-      <h2>Welcome to Online Exam Portal 🎉</h2>
-  
-      <p>Your account has been created successfully.</p>
-  
-      <p><b>Email:</b> ${student.email}</p>
-  
-      <p>Please login and complete your profile to start your assessment.</p>
-  
-      <hr>
-  
-      <p>Thank you.</p>
-      `
-    );
+
+    try {
+      await sendEmail(
+        student.email,
+        "Welcome to Online Exam Portal",
+        `
+        <h2>Welcome to Online Exam Portal 🎉</h2>
+    
+        <p>Your account has been created successfully.</p>
+    
+        <p><b>Email:</b> ${student.email}</p>
+    
+        <p>Please login and complete your profile to start your assessment.</p>
+    
+        <hr>
+    
+        <p>Thank you.</p>
+        `
+      );
+    } catch (error) {
+      console.error("Welcome email failed:", error.message);
+    }
 
     await createNotification(student._id, {
       title: "Welcome!",
