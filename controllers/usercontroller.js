@@ -6,6 +6,7 @@ const Answer = require("../models/answer");
 const ActivityLog = require("../models/activitylog");
 const jwt = require("jsonwebtoken");
 const sendEmail = require("../utils/sendEmail");
+const createNotification = require("../utils/createNotification");
 const isProfileComplete = (student) => {
   return (
     student.fullName &&
@@ -30,6 +31,12 @@ const assignExamToStudent = async (student) => {
     { studentId: student._id, examId: exam._id, status: "assigned" },
     { upsert: true, new: true }
   );
+
+  await createNotification(student._id, {
+    title: "Assessment Assigned",
+    message: `"${exam.title}" has been assigned to you. Start when you're ready.`,
+    type: "exam_assigned",
+  });
 
   return exam;
 };
@@ -87,7 +94,14 @@ exports.registerStudent = async (req, res) => {
   
       <p>Thank you.</p>
       `
-  );
+    );
+
+    await createNotification(student._id, {
+      title: "Welcome!",
+      message: "Your account has been created. Complete your profile to start the assessment.",
+      type: "welcome",
+    });
+
     res.status(201).json({
       success: true,
       message: "Student registered successfully",
@@ -382,6 +396,12 @@ exports.startAssessment = async (req, res) => {
       { upsert: true, new: true }
     );
 
+    await createNotification(student._id, {
+      title: "Assessment Started",
+      message: `"${exam.title}" has started. You have ${exam.duration} minutes to complete it.`,
+      type: "exam_started",
+    });
+
     res.status(200).json({
       success: true,
       message: "Assessment started. Camera monitoring is required.",
@@ -541,6 +561,14 @@ exports.submitAssessment = async (req, res) => {
     attempt.score = totalScore;
     attempt.passed = totalScore >= exam.passingMarks;
     await attempt.save();
+
+    await createNotification(student._id, {
+      title: attempt.passed ? "Assessment Passed" : "Assessment Result",
+      message: attempt.passed
+        ? `Congratulations! You scored ${totalScore}/${exam.totalMarks} and passed the assessment.`
+        : `You scored ${totalScore}/${exam.totalMarks}. Passing marks: ${exam.passingMarks}.`,
+      type: attempt.passed ? "exam_passed" : "exam_failed",
+    });
 
     res.status(200).json({
       success: true,

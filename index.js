@@ -9,6 +9,7 @@ const connectDB = require("./config/db");
 const adminRoutes = require("./routes/adminroutes");
 const userRoutes = require("./routes/userroutes");
 const analyticsRoutes = require("./routes/analyticsroutes");
+const notificationRoutes = require("./routes/notificationroutes");
 const app = express();
 console.log("MONGO_URI =", process.env.MONGO_URI);
 connectDB();
@@ -24,6 +25,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use("/api/admin", adminRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/analytics", analyticsRoutes);
+app.use("/api/notifications", notificationRoutes);
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
