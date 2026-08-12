@@ -105,7 +105,11 @@ router.get("/profile", verifyStudent, getProfile);
  * @swagger
  * /api/user/profile:
  *   put:
- *     summary: Update Student Profile
+ *     summary: Update / Complete Student Profile
+ *     description: |
+ *       Update student profile. Profile is marked complete when all required fields are provided:
+ *       **fullName**, **skills** (non-empty array), **education.degree**, **education.marks**.
+ *       When complete, an exam is auto-assigned if one exists.
  *     tags:
  *       - Student
  *     security:
@@ -116,9 +120,42 @@ router.get("/profile", verifyStudent, getProfile);
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - fullName
+ *               - skills
+ *               - education
+ *             properties:
+ *               fullName:
+ *                 type: string
+ *                 example: Tanishka Garg
+ *               phone:
+ *                 type: string
+ *                 example: "9876543210"
+ *               skills:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 example: ["JavaScript", "Node.js", "MongoDB"]
+ *               education:
+ *                 type: object
+ *                 required:
+ *                   - degree
+ *                   - marks
+ *                 properties:
+ *                   degree:
+ *                     type: string
+ *                     example: B.Tech
+ *                   institution:
+ *                     type: string
+ *                     example: ABC University
+ *                   marks:
+ *                     type: number
+ *                     example: 85
  *     responses:
  *       200:
  *         description: Profile updated successfully
+ *       401:
+ *         description: Unauthorized
  */
 router.put("/profile", verifyStudent, updateProfile);
 

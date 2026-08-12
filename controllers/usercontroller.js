@@ -16,6 +16,17 @@ const isProfileComplete = (student) => {
   );
 };
 
+const getMissingProfileFields = (student) => {
+  const missing = [];
+
+  if (!student.fullName) missing.push("fullName");
+  if (!student.skills?.length) missing.push("skills");
+  if (!student.education?.degree) missing.push("education.degree");
+  if (student.education?.marks == null) missing.push("education.marks");
+
+  return missing;
+};
+
 const assignExamToStudent = async (student) => {
   const exam = await Exam.findOne().sort({ createdAt: -1 });
 
@@ -223,6 +234,8 @@ exports.updateProfile = async (req, res) => {
       });
     }
 
+    const wasComplete = student.profileComplete;
+
     if (fullName) student.fullName = fullName;
     if (phone) student.phone = phone;
     if (skills) student.skills = skills;
@@ -231,6 +244,7 @@ exports.updateProfile = async (req, res) => {
     }
 
     const complete = isProfileComplete(student);
+    const missingFields = getMissingProfileFields(student);
     student.profileComplete = complete;
 
     await student.save();
@@ -239,6 +253,16 @@ exports.updateProfile = async (req, res) => {
 
     if (complete && !student.assignedExamId) {
       assignedExam = await assignExamToStudent(student);
+    }
+
+    if (complete && !wasComplete) {
+      await createNotification(student._id, {
+        title: "Profile Completed",
+        message: assignedExam
+          ? `Your profile is complete. "${assignedExam.title}" has been assigned to you.`
+          : "Your profile is complete. An assessment will be assigned once available.",
+        type: "profile_complete",
+      });
     }
 
     res.status(200).json({
@@ -253,6 +277,7 @@ exports.updateProfile = async (req, res) => {
         skills: student.skills,
         education: student.education,
         profileComplete: student.profileComplete,
+        missingFields,
         assignedExamId: student.assignedExamId,
         assignedExam: assignedExam
           ? { id: assignedExam._id, title: assignedExam.title }
