@@ -118,7 +118,42 @@ router.get("/actions", getActions);
  *         description: Dashboard statistics
  */
 router.get("/dashboard", getDashboard);
-
+/**
+ * @swagger
+ * /api/analytics/daily-login-count:
+ *   get:
+ *     summary: Get Daily Student Login Count
+ *     tags: [Analytics]
+ *     security: []
+ *     parameters:
+ *       - in: query
+ *         name: date
+ *         required: false
+ *         schema:
+ *           type: string
+ *           example: "2026-08-13"
+ *         description: Date in YYYY-MM-DD format
+ *     responses:
+ *       200:
+ *         description: Daily login count fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 date:
+ *                   type: string
+ *                   example: "2026-08-13"
+ *                 count:
+ *                   type: integer
+ *                   example: 5
+ *       500:
+ *         description: Internal Server Error
+ */
+router.get("/daily-login-count", getDailyLoginCount);
 /**
  * @swagger
  * /api/analytics/{id}:
@@ -138,42 +173,6 @@ router.get("/dashboard", getDashboard);
  *       404:
  *         description: Event not found
  */
-/**
- * @swagger
- * /api/analytics/daily-login-count:
- *   get:
- *     summary: Get Daily Student Login Count
- *     tags: [Analytics]
- *     security: []
- *     parameters:
- *       - in: query
- *         name: date
- *         required: false
- *         schema:
- *           type: string
- *           example: 2026-08-13
- *         description: Date in YYYY-MM-DD format
- *     responses:
- *       200:
- *         description: Daily login count fetched successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 date:
- *                   type: string
- *                   example: 2026-08-13
- *                 count:
- *                   type: integer
- *                   example: 5
- *       500:
- *         description: Internal Server Error
- */
-router.get("/daily-login-count", getDailyLoginCount);
 router.delete("/:id", deleteEvent);
 
 module.exports = router;
