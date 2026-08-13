@@ -108,7 +108,7 @@ const getDailyLoginCount = async (req, res) => {
     const loginDate =
       date || new Date().toISOString().split("T")[0];
 
-    const count = await dailylogin.countDocuments({
+    const count = await DailyLogin.countDocuments({
       loginDate
     });
 
