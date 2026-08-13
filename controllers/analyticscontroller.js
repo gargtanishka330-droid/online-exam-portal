@@ -1,6 +1,6 @@
 const Analytics = require("../models/analyticsmodels");
 const DailyLogin = require("../models/dailylogin");
-const getLoginGraph = require("../models/dailylogin");
+const LoginGraph = require("../models/dailylogin");
 
 // Create Analytics Event
 const createEvent = async (req, res) => {
