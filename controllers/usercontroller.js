@@ -5,6 +5,7 @@ const ExamAttempt = require("../models/examattempt");
 const Answer = require("../models/answer");
 const ActivityLog = require("../models/activitylog");
 const jwt = require("jsonwebtoken");
+const DailyLogin = require("../models/dailylogin");
 const sendEmail = require("../utils/sendEmail");
 const createNotification = require("../utils/createNotification");
 const isProfileComplete = (student) => {
@@ -173,6 +174,13 @@ exports.loginStudent = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
+    const loginDate = new Date().toISOString().split("T")[0];
+    await DailyLogin.create({
+      studentId: student._id,
+      loginDate,
+    });
+
+
 
     res.status(200).json({
       success: true,

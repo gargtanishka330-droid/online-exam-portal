@@ -1,4 +1,6 @@
 const Analytics = require("../models/analyticsmodels");
+const DailyLogin = require("../models/dailylogin");
+
 
 // Create Analytics Event
 const createEvent = async (req, res) => {
@@ -98,7 +100,30 @@ const getDashboard = async (req, res) => {
     });
   }
 };
+// Get Daily Login Count
+const getDailyLoginCount = async (req, res) => {
+  try {
+    const { date } = req.query;
 
+    const loginDate =
+      date || new Date().toISOString().split("T")[0];
+
+    const count = await DailyLogin.countDocuments({
+      loginDate
+    });
+
+    res.status(200).json({
+      success: true,
+      date: loginDate,
+      count
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
 // Delete Event
 const deleteEvent = async (req, res) => {
   try {
@@ -129,5 +154,6 @@ module.exports = {
   getImpressions,
   getActions,
   getDashboard,
+  getDailyLoginCount,
   deleteEvent,
 };
