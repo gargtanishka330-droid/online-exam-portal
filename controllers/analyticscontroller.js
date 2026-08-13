@@ -1,6 +1,6 @@
 const Analytics = require("../models/analyticsmodels");
 const DailyLogin = require("../models/dailylogin");
-
+const getLoginGraph = require("../models/dailylogin");
 
 // Create Analytics Event
 const createEvent = async (req, res) => {
@@ -124,6 +124,60 @@ const getDailyLoginCount = async (req, res) => {
     });
   }
 };
+const getLoginGraph = async (req, res) => {
+  try {
+    const { startDate, endDate } = req.query;
+
+    if (!startDate || !endDate) {
+      return res.status(400).json({
+        success: false,
+        message: "startDate and endDate are required"
+      });
+    }
+
+    const data = await DailyLogin.aggregate([
+      {
+        $match: {
+          loginDate: {
+            $gte: startDate,
+            $lte: endDate
+          }
+        }
+      },
+      {
+        $group: {
+          _id: "$loginDate",
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $sort: {
+          _id: 1
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          date: "$_id",
+          count: 1
+        }
+      }
+    ]);
+
+    res.status(200).json({
+      success: true,
+      startDate,
+      endDate,
+      data
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
 // Delete Event
 const deleteEvent = async (req, res) => {
   try {
@@ -155,5 +209,6 @@ module.exports = {
   getActions,
   getDashboard,
   getDailyLoginCount,
+  getLoginGraph,
   deleteEvent,
 };

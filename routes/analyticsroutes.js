@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
+
 const {
   createEvent,
   getAllEvents,
@@ -8,6 +9,7 @@ const {
   getActions,
   getDashboard,
   getDailyLoginCount,
+  getLoginGraph,
   deleteEvent,
 } = require("../controllers/analyticscontroller");
 
@@ -154,6 +156,38 @@ router.get("/dashboard", getDashboard);
  *         description: Internal Server Error
  */
 router.get("/daily-login-count", getDailyLoginCount);
+/**
+ * @swagger
+ * /api/analytics/login-graph:
+ *   get:
+ *     summary: Get Student Login Graph Data
+ *     description: Get student login counts between a start date and end date
+ *     tags: [Analytics]
+ *     security: []
+ *     parameters:
+ *       - in: query
+ *         name: startDate
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: "2026-08-01"
+ *         description: Start date in YYYY-MM-DD format
+ *       - in: query
+ *         name: endDate
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: "2026-08-31"
+ *         description: End date in YYYY-MM-DD format
+ *     responses:
+ *       200:
+ *         description: Login graph data fetched successfully
+ *       400:
+ *         description: Start date and end date are required
+ *       500:
+ *         description: Internal Server Error
+ */
+router.get("/login-graph", getLoginGraph);
 /**
  * @swagger
  * /api/analytics/{id}:
